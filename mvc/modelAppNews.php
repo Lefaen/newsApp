@@ -76,7 +76,6 @@ class modelAppNews
     {
         $this->data['news'] = sqlNews::getNews($page, $this->quantityOnPage);
         $this->data['numOfPages'] = $this->getNumOfPages();
-        return $this->data;
     }
 
     function getDetailNews($id)
