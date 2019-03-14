@@ -2,10 +2,9 @@
 
 class controllerNewsApp
 {
-    private $model = null;
-    private $request = null;
-    private $view = null;
-    private $data = null;
+    private $model;
+    private $view;
+    private $request;
 
     function setRequest()
     {
@@ -24,12 +23,12 @@ class controllerNewsApp
             && !isset($this->request['id'])) {
             $model->getNewsFromSql();
             if ($model->getData() != null) {
-                $this->view = new viewNewsApp($model->getData());
+                $this->view = new viewNewsApp($model->getData(), 1);
             }
         } elseif (isset($this->request['page'])) {
             $model->getNewsFromSql($this->request['page']);
             if ($model->getData() != null) {
-                $this->view = new viewNewsApp($model->getData());
+                $this->view = new viewNewsApp($model->getData(), $this->request['page']);
             }
         } elseif (isset($this->request['id'])) {
             $model->getDetailNews($this->request['id']);
@@ -44,8 +43,5 @@ class controllerNewsApp
         $this->setRequest();
         $this->model = new modelAppNews();
         $this->action($this->model);
-
-
-        //$this->view = new viewNewsApp();
     }
 }

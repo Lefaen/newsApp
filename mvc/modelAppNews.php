@@ -1,23 +1,15 @@
 <?php
 
-class sql
+class sqlNews
 {
-    static private $host;
-    static private $user;
-    static private $pass;
-    static private $db;
-    static private $charset;
+    static private $host = 'localhost';
+    static private $user ='root';
+    static private $pass ='';
+    static private $db = 'test';
+    static private $charset = 'utf8';
 
-    private static function connectSql($debug = true)
+    private static function connectSql()
     {
-
-        if ($debug == true) {
-            self::$host = 'localhost';
-            self::$user = 'root';
-            self::$pass = '';
-            self::$db = 'test';
-            self::$charset = 'utf8';
-        }
         $dsn = 'mysql:host=' . self::$host . ';dbname=' . self::$db . ';charset=' . self::$charset;
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -29,18 +21,18 @@ class sql
 
     }
 
-    public static function getNews($page, $quantity = 5)
+    public static function getNews($page, $quantity)
     {
-
-
         $pdo = self::connectSql();
         $res = $pdo->prepare("SELECT `id`, FROM_UNIXTIME(`idate`, '%d-%m-%Y') as idate, `title`, `announce`
                                             FROM `news`
                                             ORDER BY idate DESC
                                             LIMIT :quantity OFFSET :offset");
         $values[':quantity'] = $quantity;
+
         $offset = $quantity * ($page - 1);
         $values[':offset'] = $offset;
+
         $res->execute($values);
         return $res->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -80,21 +72,21 @@ class modelAppNews
         return $this->numOfPages;
     }
 
-    function getNewsFromSql($page = 1, $quantityOnPage = 5)
+    function getNewsFromSql($page = 1)
     {
-        $this->data['news'] = sql::getNews($page);
+        $this->data['news'] = sqlNews::getNews($page, $this->quantityOnPage);
         $this->data['numOfPages'] = $this->getNumOfPages();
         return $this->data;
     }
 
     function getDetailNews($id)
     {
-        $this->data = sql::getDetailNews($id);
+        $this->data = sqlNews::getDetailNews($id);
     }
 
     public function __construct()
     {
-        $quantity = sql::getQuantityStrings();
+        $quantity = sqlNews::getQuantityStrings();
         $numOfPages = $quantity / $this->quantityOnPage;
         if ($quantity % $this->quantityOnPage != 0) {
             $numOfPages++;
