@@ -23,7 +23,7 @@ class controllerNewsApp
             && !isset($this->request['id'])) {
             $model->getNewsFromSql();
             if ($model->getData() != null) {
-                $this->view = new viewNewsApp($model->getData(), 1);
+                $this->view = new viewNewsApp($model->getData(), $startPage);
             }
         } elseif (isset($this->request['page'])) {
             $model->getNewsFromSql($this->request['page']);
